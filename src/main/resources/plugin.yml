@@ -12,3 +12,5 @@ commands:
     description: Warp.
   enchantgui:
     description: EnchantGUI.
+  setspawn:
+    description: Setzt den Spawn.

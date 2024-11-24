@@ -1,12 +1,10 @@
 package me.dragoneisbaer.minecraft.givemending;
 
 import me.dragoneisbaer.minecraft.givemending.Listeners.EnchantGUI;
+import me.dragoneisbaer.minecraft.givemending.Listeners.SpawnFlight;
 import me.dragoneisbaer.minecraft.givemending.Memory.PlayerUtility;
 import me.dragoneisbaer.minecraft.givemending.TabComplete.TCWarp;
-import me.dragoneisbaer.minecraft.givemending.commands.EnchantGUICommand;
-import me.dragoneisbaer.minecraft.givemending.commands.MendingCommand;
-import me.dragoneisbaer.minecraft.givemending.commands.RemoveMending;
-import me.dragoneisbaer.minecraft.givemending.commands.Warp;
+import me.dragoneisbaer.minecraft.givemending.commands.*;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -41,15 +39,10 @@ public final class GameUtils extends JavaPlugin {
         getCommand("warp").setExecutor(new Warp());
         getCommand("warp").setTabCompleter(new TCWarp());
         getCommand("enchantgui").setExecutor(new EnchantGUICommand());
+        getCommand("setspawn").setExecutor(new SetSpawn());
 
         getServer().getPluginManager().registerEvents(new EnchantGUI(this), this);
-
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                Bukkit.getServer().broadcastMessage(itemstacks.get(Bukkit.getPlayer("DragonEisbaer")).toString());
-            }
-        }.runTaskTimer(this, 0, 20);
+        getServer().getPluginManager().registerEvents(new SpawnFlight(), this);
     }
 
     @Override
