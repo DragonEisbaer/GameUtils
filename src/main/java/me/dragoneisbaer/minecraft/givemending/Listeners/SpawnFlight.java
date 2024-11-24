@@ -28,19 +28,21 @@ public class SpawnFlight implements Listener {
         Location anfanglocation = new Location(Bukkit.getWorlds().get(0), cfg.getDouble("Anfang.X"), cfg.getDouble("Anfang.Y"), cfg.getDouble("Anfang.Z"));
         Player player = e.getPlayer();
         Location playerloc = player.getLocation();
-        if (playerloc.distance(anfanglocation) <= 100) {
-            Block block = playerloc.add(0,-2,0).getBlock();
-            if (block.getType() == Material.AIR) {
-                player.setGliding(true);
-            }
-            if (!flying.contains(player)) {
-                flying.add(player);
-            }
-        }else {
-            if (flying.contains(player)) {
-                player.setGliding(true);
-                if (player.isOnGround()) {
-                    flying.remove(player);
+        if (!player.isFlying()) {
+            if (playerloc.distance(anfanglocation) <= 100 && playerloc.distance(anfanglocation) >= 21) {
+                Block block = playerloc.add(0, -1.5, 0).getBlock();
+                if (block.getType() == Material.AIR) {
+                    player.setGliding(true);
+                }
+                if (!flying.contains(player)) {
+                    flying.add(player);
+                }
+            } else {
+                if (flying.contains(player)) {
+                    player.setGliding(true);
+                    if (player.isOnGround()) {
+                        flying.remove(player);
+                    }
                 }
             }
         }
