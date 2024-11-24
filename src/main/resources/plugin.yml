@@ -1,0 +1,14 @@
+name: GiveMending
+version: '${project.version}'
+main: me.dragoneisbaer.minecraft.givemending.GameUtils
+api-version: '1.21'
+load: STARTUP
+commands:
+  mending:
+    description: Macht dir Mending auf dein Item.
+  removemending:
+    description: Macht das Enchantment weg.
+  warp:
+    description: Warp.
+  enchantgui:
+    description: EnchantGUI.
