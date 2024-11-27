@@ -1,7 +1,5 @@
 package me.dragoneisbaer.minecraft.givemending.Memory;
 
-import me.dragoneisbaer.minecraft.givemending.Memory.PlayerMemory;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import java.util.HashMap;

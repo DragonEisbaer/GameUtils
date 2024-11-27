@@ -1,4 +1,4 @@
-name: GiveMending
+name: GameUtils
 version: '${project.version}'
 main: me.dragoneisbaer.minecraft.givemending.GameUtils
 api-version: '1.21'
@@ -14,3 +14,5 @@ commands:
     description: EnchantGUI.
   setspawn:
     description: Setzt den Spawn.
+  dispic:
+    description: Disabled PickupItems.

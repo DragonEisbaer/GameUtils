@@ -29,7 +29,9 @@ import java.util.stream.Collectors;
 
 public final class GameUtils extends JavaPlugin {
 
+
     public HashMap<Player,ItemStack> itemstacks = new HashMap<>();
+    public List<Player> dispic = new ArrayList<>();
 
     @Override
     public void onEnable() {
@@ -40,13 +42,26 @@ public final class GameUtils extends JavaPlugin {
         getCommand("warp").setTabCompleter(new TCWarp());
         getCommand("enchantgui").setExecutor(new EnchantGUICommand());
         getCommand("setspawn").setExecutor(new SetSpawn());
+        getCommand("dispic").setExecutor(new DisablePickup(this));
 
-        getServer().getPluginManager().registerEvents(new EnchantGUI(this), this);
+        getServer().getPluginManager().registerEvents(new EnchantGUI(), this);
         getServer().getPluginManager().registerEvents(new SpawnFlight(), this);
+        getServer().getPluginManager().registerEvents(new me.dragoneisbaer.minecraft.givemending.Listeners.DisablePickup(), this);
     }
 
     @Override
     public void onDisable() {
         // Plugin shutdown logic
+    }
+
+    public HashMap<Player,ItemStack> getItemstacks() {
+        return itemstacks;
+    }
+    public void setItemstacks(HashMap<Player,ItemStack> itemstacks) {
+        this.itemstacks = itemstacks;
+    }
+
+    public List<Player> getDispic() {
+        return dispic;
     }
 }
