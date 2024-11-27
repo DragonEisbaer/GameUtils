@@ -1,8 +1,6 @@
 package me.dragoneisbaer.minecraft.givemending.Listeners;
 
 import me.dragoneisbaer.minecraft.givemending.GameUtils;
-import me.dragoneisbaer.minecraft.givemending.Memory.PlayerMemory;
-import me.dragoneisbaer.minecraft.givemending.Memory.PlayerUtility;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -14,8 +12,6 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
-
-import java.util.HashMap;
 
 public class EnchantGUI implements Listener {
 
@@ -36,13 +32,12 @@ public class EnchantGUI implements Listener {
                 HumanEntity human = event.getWhoClicked();
                 if (human instanceof Player) {
                     Player player = (Player) human;
-                    HashMap<Player,ItemStack> itemstacks = plugin.getItemstacks();
-                    if (itemstacks.get(player) == null) {
-                        itemstacks.put(player, event.getCurrentItem());
-                        plugin.setItemstacks(itemstacks);
+                    if (plugin.getItemstacks().get(player) == null) {
+                        if (event.getCurrentItem().getType() != Material.AIR) {
+                            plugin.getItemstacks().put(player, event.getCurrentItem());
+                            Bukkit.getServer().broadcastMessage(plugin.getItemstacks().values().toString());
+                        }
                     }
-                    Bukkit.getServer().broadcastMessage("SetI: " + itemstacks.get(player).toString());
-                    //player.getInventory().addItem(memory.getItem());
                 }
             }
         }
@@ -53,14 +48,11 @@ public class EnchantGUI implements Listener {
         if (title.equalsIgnoreCase("EnchantGUI")) {
             if (event.getPlayer() instanceof Player) {
                 Player player = (Player) event.getPlayer();
-                HashMap<Player,ItemStack> itemstacks = plugin.getItemstacks();
-                if (itemstacks.get(player) != null) {
-                    ItemStack playerItem = itemstacks.get(player);
-                    Bukkit.getServer().broadcastMessage("ReadItem: " + playerItem.toString());
+                if (plugin.getItemstacks().get(player) != null) {
+                    plugin.getItemstacks().put(player, new ItemStack(Material.BOOK));
+                    Bukkit.getServer().broadcastMessage("ReadItem: " + plugin.getItemstacks().values());
                     player.getInventory().addItem(plugin.getItemstacks().get(player));
-                    itemstacks.put(player, null);
-                    plugin.setItemstacks(itemstacks);
-                    //PlayerUtility.setPlayerMemory(player, memory);
+                    plugin.getItemstacks().remove(player);
                 }
             }
         }
