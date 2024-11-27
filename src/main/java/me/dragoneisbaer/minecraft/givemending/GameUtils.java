@@ -43,7 +43,7 @@ public final class GameUtils extends JavaPlugin {
             public void run() {
                 Bukkit.getLogger().log(Level.INFO, "DD: " + getItemstacks().values());
             }
-        }.runTaskTimerAsynchronously(this, 0, 1);
+        }.runTaskTimerAsynchronously(this, 0, 10);
     }
 
 

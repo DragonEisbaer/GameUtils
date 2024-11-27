@@ -4,14 +4,21 @@ import me.dragoneisbaer.minecraft.givemending.GameUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.block.Container;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.event.inventory.InventoryMoveItemEvent;
+import org.bukkit.event.inventory.InventoryType;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import java.awt.*;
+import java.util.Objects;
 
 public class EnchantGUI implements Listener {
 
@@ -32,26 +39,27 @@ public class EnchantGUI implements Listener {
                 HumanEntity human = event.getWhoClicked();
                 if (human instanceof Player) {
                     Player player = (Player) human;
-                    if (plugin.getItemstacks().get(player) == null) {
-                        if (event.getCurrentItem().getType() != Material.AIR) {
-                            plugin.getItemstacks().put(player, event.getCurrentItem());
-                            Bukkit.getServer().broadcastMessage(plugin.getItemstacks().values().toString());
-                        }
+                    ItemStack item = event.getCurrentItem();
+                    if (!Objects.equals(item, new ItemStack(Material.AIR))) {
+                        plugin.getItemstacks().put(player, event.getCurrentItem().clone());
+                        Bukkit.getServer().broadcastMessage(plugin.getItemstacks().values().toString());
                     }
                 }
             }
         }
     }
+
+
     @EventHandler
     public void onInvClose(InventoryCloseEvent event) {
         String title = ChatColor.stripColor(event.getView().getTitle());
         if (title.equalsIgnoreCase("EnchantGUI")) {
             if (event.getPlayer() instanceof Player) {
                 Player player = (Player) event.getPlayer();
-                if (plugin.getItemstacks().get(player) != null) {
-                    plugin.getItemstacks().put(player, new ItemStack(Material.BOOK));
+                ItemStack storeditem = plugin.getItemstacks().get(player);
+                if (storeditem != null) {
                     Bukkit.getServer().broadcastMessage("ReadItem: " + plugin.getItemstacks().values());
-                    player.getInventory().addItem(plugin.getItemstacks().get(player));
+                    player.getInventory().addItem(storeditem);
                     plugin.getItemstacks().remove(player);
                 }
             }
