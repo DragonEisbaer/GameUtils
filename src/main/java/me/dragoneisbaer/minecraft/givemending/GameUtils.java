@@ -33,6 +33,7 @@ public final class GameUtils extends JavaPlugin {
         getCommand("enchantgui").setExecutor(new EnchantGUICommand());
         getCommand("setspawn").setExecutor(new SetSpawn());
         getCommand("dispic").setExecutor(new DisablePickup(this));
+        getCommand("ec").setExecutor(new Enderchest());
 
         getServer().getPluginManager().registerEvents(new EnchantGUI(), this);
         getServer().getPluginManager().registerEvents(new SpawnFlight(), this);

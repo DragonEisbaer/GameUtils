@@ -16,3 +16,5 @@ commands:
     description: Setzt den Spawn.
   dispic:
     description: Disabled PickupItems.
+  ec:
+    description: Opens Enderchest.

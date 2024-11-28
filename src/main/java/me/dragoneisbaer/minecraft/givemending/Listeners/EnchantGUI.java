@@ -42,7 +42,6 @@ public class EnchantGUI implements Listener {
                     ItemStack item = event.getCurrentItem();
                     if (!Objects.equals(item, new ItemStack(Material.AIR))) {
                         plugin.getItemstacks().put(player, event.getCurrentItem().clone());
-                        Bukkit.getServer().broadcastMessage(plugin.getItemstacks().values().toString());
                     }
                 }
             }
