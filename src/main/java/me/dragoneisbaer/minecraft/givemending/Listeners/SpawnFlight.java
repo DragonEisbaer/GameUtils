@@ -31,9 +31,9 @@ public class SpawnFlight implements Listener {
         Location playerloc = player.getLocation();
         if (!player.isFlying()) {
             if (playerloc.distance(anfanglocation) <= 100 /*&& playerloc.distance(anfanglocation) >= 21*/) {
-                Block block = playerloc.add(0, -1, 0).getBlock();
-                Block block1 = playerloc.add(0, -2, 0).getBlock();
-                Block block2 = playerloc.add(0, -3, 0).getBlock();
+                Block block = playerloc.getBlock();
+                Block block1 = playerloc.add(0, -1, 0).getBlock();
+                Block block2 = playerloc.add(0, -2, 0).getBlock();
                 if (block.getType() == Material.AIR && block1.getType() == Material.AIR && block2.getType() == Material.AIR) {
                     player.setGliding(true);
                 }
