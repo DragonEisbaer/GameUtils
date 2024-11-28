@@ -26,8 +26,8 @@ public class EnchantGUI implements Listener {
 
     @EventHandler
     public void onGiveItem(InventoryClickEvent event) {
-        String title = ChatColor.stripColor(event.getView().getTitle());
-        if (title.equalsIgnoreCase("EnchantGUI")) {
+        String title = event.getView().getTitle();
+        if (title.equalsIgnoreCase(ChatColor.DARK_BLUE + "EnchantGUI")) {
             if (event.getCurrentItem() != null) {
                 if ((event.getCurrentItem().getType().equals(Material.OAK_SIGN) || (event.getCurrentItem().getType().equals(Material.BOOK)) || event.getCurrentItem().getType().equals(Material.BOOKSHELF) || event.getCurrentItem().getType().equals(Material.GRAY_STAINED_GLASS_PANE))) {
                     event.setCancelled(true);
@@ -52,8 +52,8 @@ public class EnchantGUI implements Listener {
 
     @EventHandler
     public void onInvClose(InventoryCloseEvent event) {
-        String title = ChatColor.stripColor(event.getView().getTitle());
-        if (title.equalsIgnoreCase("EnchantGUI")) {
+        String title = event.getView().getTitle();
+        if (title.equalsIgnoreCase(ChatColor.DARK_BLUE + "EnchantGUI")) {
             if (event.getPlayer() instanceof Player) {
                 Player player = (Player) event.getPlayer();
                 ItemStack storeditem = plugin.getItemstacks().get(player);
@@ -69,7 +69,7 @@ public class EnchantGUI implements Listener {
 
     @EventHandler
     public void openChest(InventoryOpenEvent e) {
-        if (e.getView().getTitle().equalsIgnoreCase("EnchantGUI")) {
+        if (e.getView().getTitle().equalsIgnoreCase(ChatColor.DARK_BLUE + "EnchantGUI")) {
             Block block = Objects.requireNonNull(e.getInventory().getLocation()).getBlock();
             if (block.getType() == Material.CHEST) {
                 e.setCancelled(true);
