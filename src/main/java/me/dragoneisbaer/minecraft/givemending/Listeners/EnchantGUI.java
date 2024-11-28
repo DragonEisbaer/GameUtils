@@ -4,15 +4,15 @@ import me.dragoneisbaer.minecraft.givemending.GameUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.block.Block;
+import org.bukkit.block.Chest;
 import org.bukkit.block.Container;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.InventoryCloseEvent;
-import org.bukkit.event.inventory.InventoryMoveItemEvent;
-import org.bukkit.event.inventory.InventoryType;
+import org.bukkit.event.inventory.*;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -62,6 +62,19 @@ public class EnchantGUI implements Listener {
                     player.getInventory().addItem(storeditem);
                     plugin.getItemstacks().remove(player);
                 }
+            }
+        }
+    }
+
+
+    @EventHandler
+    public void openChest(InventoryOpenEvent e) {
+        if (e.getView().getTitle().equalsIgnoreCase("EnchantGUI")) {
+            Block block = Objects.requireNonNull(e.getInventory().getLocation()).getBlock();
+            if (block.getType() == Material.CHEST) {
+                e.setCancelled(true);
+                Player player = (Player) e.getPlayer();
+                player.sendMessage(ChatColor.RED + "Bitte nutze den Befehl: /enchantgui!");
             }
         }
     }
