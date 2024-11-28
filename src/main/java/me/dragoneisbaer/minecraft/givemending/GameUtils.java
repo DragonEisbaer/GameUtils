@@ -37,13 +37,14 @@ public final class GameUtils extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new EnchantGUI(), this);
         getServer().getPluginManager().registerEvents(new SpawnFlight(), this);
         getServer().getPluginManager().registerEvents(new me.dragoneisbaer.minecraft.givemending.Listeners.DisablePickup(), this);
-
+        /*
         new BukkitRunnable() {
             @Override
             public void run() {
                 Bukkit.getLogger().log(Level.INFO, "DD: " + getItemstacks().values());
             }
         }.runTaskTimerAsynchronously(this, 0, 10);
+         */
     }
 
 
