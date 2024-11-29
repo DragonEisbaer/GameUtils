@@ -6,9 +6,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-
-import java.util.ArrayList;
-import java.util.List;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 public class DisablePickup implements CommandExecutor {
 
@@ -16,7 +14,7 @@ public class DisablePickup implements CommandExecutor {
     public DisablePickup(GameUtils plugin) {this.plugin = plugin;}
 
     @Override
-    public boolean onCommand(CommandSender commandSender, Command command, String s, String[] strings) {
+    public boolean onCommand(@NonNull CommandSender commandSender, @NonNull Command command, String s, String[] strings) {
 
         if (commandSender instanceof Player) {
             Player player = (Player) commandSender;
