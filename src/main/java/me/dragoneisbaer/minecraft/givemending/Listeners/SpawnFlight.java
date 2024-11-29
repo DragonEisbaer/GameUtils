@@ -23,7 +23,7 @@ public class SpawnFlight implements Listener {
     @EventHandler
     public void onSpawnLoc(PlayerMoveEvent e) {
         Player player = e.getPlayer();
-        if (player.getLocation().getWorld() == Bukkit.getWorlds().get(1)) {
+        if (player.getLocation().getWorld() == Bukkit.getWorlds().get(1) || player.getLocation().getWorld() == Bukkit.getWorlds().get(2)) {
             return;
         }
         File f = new File(Bukkit.getUpdateFolder() + "/Locations/spawnloc.yml");

@@ -10,10 +10,14 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.*;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
-
+import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
 
 public class EnchantGUI implements Listener {
 
@@ -36,7 +40,16 @@ public class EnchantGUI implements Listener {
                     Player player = (Player) human;
                     ItemStack item = event.getCurrentItem();
                     if (!Objects.equals(item, new ItemStack(Material.AIR))) {
-                        plugin.getItemstacks().put(player, event.getCurrentItem().clone());
+                        ItemStack citem = event.getCurrentItem();
+                        ItemMeta  citemmeta = citem.getItemMeta();
+                        if (citemmeta.getLore() == null) {
+                            //citemmeta.setLore(List.of(HiddenStringUtils.encodeString()));
+                            citem.setItemMeta(citemmeta);
+                            plugin.getItemstacks().put(player, citem);
+                        }else if (citemmeta.getLore() != null){
+                            String uuid = citemmeta.getLore().get(0);
+                        }
+                        player.sendMessage(plugin.getItemstacks().get(player).getItemMeta().getLore().get(0));
                     }
                 }
             }
@@ -52,9 +65,10 @@ public class EnchantGUI implements Listener {
                 Player player = (Player) event.getPlayer();
                 ItemStack storeditem = plugin.getItemstacks().get(player);
                 if (storeditem != null) {
-                    Bukkit.getServer().broadcastMessage("ReadItem: " + plugin.getItemstacks().values());
-                    player.getInventory().addItem(storeditem);
-                    plugin.getItemstacks().remove(player);
+                    if (!player.getInventory().contains(storeditem)) {
+                        player.getInventory().addItem(storeditem);
+                        plugin.getItemstacks().remove(player);
+                    }
                 }
             }
         }

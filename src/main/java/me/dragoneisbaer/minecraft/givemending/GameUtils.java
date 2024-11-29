@@ -4,24 +4,20 @@ import me.dragoneisbaer.minecraft.givemending.Listeners.EnchantGUI;
 import me.dragoneisbaer.minecraft.givemending.Listeners.SpawnFlight;
 import me.dragoneisbaer.minecraft.givemending.TabComplete.TCWarp;
 import me.dragoneisbaer.minecraft.givemending.commands.*;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public final class GameUtils extends JavaPlugin {
 
 
     private final HashMap<Player,ItemStack> itemstacks = new HashMap<>();
     private final List<Player> dispic = new ArrayList<>();
+    private final List<Player> playerclicks = new ArrayList<>();
 
     @Override
     public void onEnable() {
@@ -54,5 +50,8 @@ public final class GameUtils extends JavaPlugin {
     }
     public List<Player> getDispic() {
         return dispic;
+    }
+    public List<Player> getPlayerClicks() {
+        return playerclicks;
     }
 }
