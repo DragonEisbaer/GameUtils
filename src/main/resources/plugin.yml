@@ -18,3 +18,5 @@ commands:
     description: Disabled PickupItems.
   ec:
     description: Opens Enderchest.
+  restart:
+    description: Restarts server with cooldown.

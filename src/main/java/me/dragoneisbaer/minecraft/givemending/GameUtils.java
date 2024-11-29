@@ -17,7 +17,6 @@ public final class GameUtils extends JavaPlugin {
 
     private final HashMap<Player,ItemStack> itemstacks = new HashMap<>();
     private final List<Player> dispic = new ArrayList<>();
-    private final List<Player> playerclicks = new ArrayList<>();
 
     @Override
     public void onEnable() {
@@ -30,6 +29,7 @@ public final class GameUtils extends JavaPlugin {
         getCommand("setspawn").setExecutor(new SetSpawn());
         getCommand("dispic").setExecutor(new DisablePickup(this));
         getCommand("ec").setExecutor(new Enderchest());
+        getCommand("restart").setExecutor(new RestartServer());
 
         getServer().getPluginManager().registerEvents(new EnchantGUI(), this);
         getServer().getPluginManager().registerEvents(new SpawnFlight(), this);
@@ -50,8 +50,5 @@ public final class GameUtils extends JavaPlugin {
     }
     public List<Player> getDispic() {
         return dispic;
-    }
-    public List<Player> getPlayerClicks() {
-        return playerclicks;
     }
 }
