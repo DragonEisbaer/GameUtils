@@ -1,11 +1,9 @@
 package me.dragoneisbaer.minecraft.givemending.Listeners;
 
-import me.dragoneisbaer.minecraft.givemending.Memory.PlayerMemory;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.damage.DamageSource;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
