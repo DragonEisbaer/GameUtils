@@ -25,7 +25,7 @@ public class RestartServer implements CommandExecutor {
             Player player = (Player) commandSender;
             if (player.hasPermission("GameUtils.Restart")) {
                 if (strings.length == 1) {
-                    int tmp = 0;
+                    int tmp;
                     try {
                         tmp = Integer.parseInt(strings[0]);
                     }catch (NumberFormatException e) {
