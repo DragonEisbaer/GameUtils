@@ -24,6 +24,6 @@ public class RemoveMending implements CommandExecutor {
             commandSender.sendMessage(ChatColor.DARK_RED + "Du musst ein Spieler sein!");
         }
 
-        return false;
+        return true;
     }
 }
