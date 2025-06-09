@@ -49,10 +49,10 @@ public class EnchantGUICommand implements CommandExecutor {
             }
 
             //SetItems
-            gui.setItem(10, new ItemStack(Material.AIR));
-            gui.setItem(12, search);
-            gui.setItem(14, level);
-            gui.setItem(16, allench);
+            gui.setItem(13, new ItemStack(Material.AIR));
+            //gui.setItem(12, search);
+            //gui.setItem(14, level);
+            //gui.setItem(16, allench);
 
             //GuiConf
             gui.setMaxStackSize(1);

@@ -1,7 +1,7 @@
 package me.dragoneisbaer.minecraft.givemending;
 
 import me.dragoneisbaer.minecraft.givemending.Listeners.EnchantGUI;
-import me.dragoneisbaer.minecraft.givemending.Listeners.SpawnFlight;
+import me.dragoneisbaer.minecraft.givemending.Listeners.SpawnFlightElytra;
 import me.dragoneisbaer.minecraft.givemending.TabComplete.TCWarp;
 import me.dragoneisbaer.minecraft.givemending.commands.*;
 import org.bukkit.entity.Player;
@@ -30,18 +30,17 @@ public final class GameUtils extends JavaPlugin {
         getCommand("dispic").setExecutor(new DisablePickup(this));
         getCommand("ec").setExecutor(new Enderchest());
         getCommand("restart").setExecutor(new RestartServer());
+        getCommand("spawn").setExecutor(new Spawn());
 
         getServer().getPluginManager().registerEvents(new EnchantGUI(), this);
-        getServer().getPluginManager().registerEvents(new SpawnFlight(), this);
+        getServer().getPluginManager().registerEvents(new SpawnFlightElytra(), this);
         getServer().getPluginManager().registerEvents(new me.dragoneisbaer.minecraft.givemending.Listeners.DisablePickup(), this);
-        /*
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                Bukkit.getLogger().log(Level.INFO, "DD: " + getItemstacks().values());
-            }
-        }.runTaskTimerAsynchronously(this, 0, 10);
-         */
+
+        getConfig().options().copyDefaults(true);
+        saveDefaultConfig();
+        getLogger().info("Config: GameUtils geladen!");
+
+        getLogger().info("Plugin: GameUtils geladen!");
     }
 
 

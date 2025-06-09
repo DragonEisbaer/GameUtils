@@ -20,3 +20,5 @@ commands:
     description: Opens Enderchest.
   restart:
     description: Restarts server with cooldown.
+  spawn:
+    description: Teleports to spawn.
