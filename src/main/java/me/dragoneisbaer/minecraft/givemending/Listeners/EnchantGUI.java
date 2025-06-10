@@ -5,7 +5,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
-import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -21,9 +20,8 @@ public class EnchantGUI implements Listener {
 
     GameUtils plugin = JavaPlugin.getPlugin(GameUtils.class);
 
-    private boolean openedInv = false;
     ArrayList<ItemStack> alloweditems = new ArrayList<>();
-private boolean openingNewInventory = false;
+    private boolean openingNewInventory = false;
 
     @EventHandler
     public void onGiveItem(InventoryClickEvent event) {
