@@ -12,6 +12,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.*;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.*;
@@ -20,6 +21,7 @@ public class EnchantGUI implements Listener {
 
     GameUtils plugin = JavaPlugin.getPlugin(GameUtils.class);
 
+    HashMap<Player, Integer> page = new HashMap<>();
     ArrayList<ItemStack> alloweditems = new ArrayList<>();
     private boolean openingNewInventory = false;
 
@@ -54,7 +56,8 @@ public class EnchantGUI implements Listener {
                 plugin.getStoredEnchantItem().put(player, event.getCurrentItem());
                 plugin.getLogger().info("Set Item: " + event.getCurrentItem().getType() + " for " + player.getName());
             }
-            setInv(player);
+            setInv(player, 0);
+            page.put(player, 1);
             player.openInventory(inv);
             event.setCancelled(true);
         }
@@ -80,9 +83,43 @@ public class EnchantGUI implements Listener {
         }
     }
 
+    @EventHandler
+    public void handleNextArrow(InventoryClickEvent e) {
+        if (!e.getView().getTitle().equalsIgnoreCase(ChatColor.DARK_BLUE + "EnchantGUI")) {
+            return;
+        }
+        if (e.getCurrentItem() == null || e.getCurrentItem().getType() != Material.ARROW) {
+            return;
+        }
+        if (e.getSlot() != 26) {
+            return;
+        }
+        Player player = (Player) e.getWhoClicked();
+
+        if (page.containsKey(player)) {
+            switch (page.get(player)) {
+                case 1:
+                    setInv(player, 15);
+                    page.put(player, 2);
+                    break;
+                case 2:
+                    setInv(player, 30);
+                    page.put(player, 3);
+                    break;
+                case 3:
+                    setInv(player, 45);
+                    page.put(player, 4);
+                    break;
+            }
+            plugin.getLogger().info("Set Page: " + page.get(player) + " for " + player.getName());
+        }
+        openingNewInventory = true;
+
+        player.openInventory(inv);
+    }
 
     @EventHandler
-    public void openChest(InventoryOpenEvent e) {
+    public void preventRenameChestExploit(InventoryOpenEvent e) {
         if (e.getInventory().getLocation() == null) {
             return;
         }
@@ -94,6 +131,89 @@ public class EnchantGUI implements Listener {
                 player.sendMessage(ChatColor.RED + "Bitte nutze den Befehl: /enchantgui!");
             }
         }
+    }
+
+    private void setInv(Player player, int startIndex) {
+
+        inv = getBasicInv(player);
+
+        int enchindex = startIndex;
+
+        ArrayList<Enchantment> allPossibleEnchantments = getAllPossibleEnchantments(player);
+
+        //SetEnchs
+        List<Integer> safeslots = new ArrayList<>(Arrays.asList(0, 1, 2, 3, 9, 10, 11, 12, 18, 19, 20, 21));
+        if (allPossibleEnchantments.size() > 15 || plugin.getStoredEnchantItem().get(player).getType() == Material.BOOK) {
+            safeslots.add(27);
+        }
+        for (int i = 0; i < inv.getSize(); i++) {
+            plugin.getLogger().info("Slot: " + i + " for " + player.getName());
+            if (safeslots.contains(i + 1)) {
+                if (enchindex >= allPossibleEnchantments.size()) {
+                    plugin.getLogger().info("All Ench done!");
+                } else {
+                    plugin.getLogger().info("Skip Ench: " + allPossibleEnchantments.get(enchindex) + " for " + player.getName() + " (" + enchindex + ")");
+                }
+            } else {
+                if (enchindex >= allPossibleEnchantments.size()) {
+                    plugin.getLogger().info("All Ench done!");
+                    page.put(player, 99);
+                    break;
+                } else {
+                    ItemStack ench = new ItemStack(Material.ENCHANTED_BOOK);
+                    ench.addUnsafeEnchantment(allPossibleEnchantments.get(enchindex), 1);
+                    enchindex++;
+                    inv.setItem(i + 1, ench);
+                    plugin.getLogger().info("Set Ench: " + allPossibleEnchantments.get(enchindex - 1) + " for " + player.getName() + " (" + enchindex + ")");
+                }
+            }
+        }
+        if (safeslots.contains(27)) {
+            page.putIfAbsent(player, 1);
+            if (page.get(player) != 99) {
+                ItemStack next = new ItemStack(Material.ARROW);
+                ItemMeta meta = next.getItemMeta();
+                assert meta != null;
+                meta.setDisplayName(ChatColor.GREEN + "Next");
+                next.setItemMeta(meta);
+                inv.setItem(26, next);
+            }
+        }
+        //DisableShifting
+        inv.setMaxStackSize(1);
+    }
+
+    private Inventory getBasicInv(Player player) {
+        Inventory basicInv = Bukkit.createInventory(null, 27, ChatColor.DARK_BLUE + "EnchantGUI");
+
+        //SetPanes
+        for (int i = 0; basicInv.getSize() > i; i++) {
+            basicInv.setItem(i, new ItemStack(Material.GRAY_STAINED_GLASS_PANE));
+        }
+
+        //SetBookshelfs
+        basicInv.setItem(3, new ItemStack(Material.BOOKSHELF));
+        basicInv.setItem(12, new ItemStack(Material.BOOKSHELF));
+        basicInv.setItem(21, new ItemStack(Material.BOOKSHELF));
+
+        basicInv.setItem(10, plugin.getStoredEnchantItem().get(player));
+
+        return basicInv;
+    }
+
+    private ArrayList<Enchantment> getAllPossibleEnchantments(Player player) {
+        //Check all Possible Enchants
+        ArrayList<Enchantment> allPossibleEnchantments = new ArrayList<>();
+        if (plugin.getStoredEnchantItem().get(player).getType() == Material.BOOK) {
+            allPossibleEnchantments.addAll(List.of(Enchantment.values()));
+        }else {
+            for (Enchantment enchantment : Enchantment.values()) {
+                if (enchantment.canEnchantItem(plugin.getStoredEnchantItem().get(player))) {
+                    allPossibleEnchantments.add(enchantment);
+                }
+            }
+        }
+        return allPossibleEnchantments;
     }
 
     private void setAllowedItems() {
@@ -156,62 +276,5 @@ public class EnchantGUI implements Listener {
         alloweditems.add(new ItemStack(Material.NETHERITE_LEGGINGS));
         alloweditems.add(new ItemStack(Material.NETHERITE_BOOTS));
         alloweditems.add(new ItemStack(Material.TURTLE_HELMET));
-    }
-    private void setInv(Player player) {
-        inv = Bukkit.createInventory(null, 27, ChatColor.DARK_BLUE + "EnchantGUI");
-
-        //SetPanes
-        for (int i = 0;inv.getSize()>i;i++) {
-            inv.setItem(i,new ItemStack(Material.GRAY_STAINED_GLASS_PANE));
-        }
-
-        //SetItemDisplay
-        inv.setItem(10, plugin.getStoredEnchantItem().get(player));
-
-        //SetBookshelfs
-        inv.setItem(3, new ItemStack(Material.BOOKSHELF));
-        inv.setItem(12, new ItemStack(Material.BOOKSHELF));
-        inv.setItem(21, new ItemStack(Material.BOOKSHELF));
-
-        //Check all Possible Enchants
-        ArrayList<Enchantment> allPossibleEnchantments = new ArrayList<>();
-        for (Enchantment enchantment : Enchantment.values()) {
-            if (enchantment.canEnchantItem(plugin.getStoredEnchantItem().get(player))) {
-                allPossibleEnchantments.add(enchantment);
-            }
-        }
-        plugin.getLogger().info("Allench: " + allPossibleEnchantments + " for " + player.getName() + " (" + allPossibleEnchantments.size() + ")");
-
-        //SetEnchs
-        if (allPossibleEnchantments.size() <= 15) {
-            List<Integer> safeslots = Arrays.asList(0,1,2,3,9,10,11,12,18,19,20,21);
-            int enchindex = 0;
-            for (int i = 0;i<inv.getSize();i++) {
-                plugin.getLogger().info("Slot: " + i + " for " + player.getName());
-                if (safeslots.contains(i+1)) {
-                    if (enchindex >= allPossibleEnchantments.size()) {
-                        plugin.getLogger().info("All Ench done!");
-                    }else {
-                        plugin.getLogger().info("Skip Ench: " + allPossibleEnchantments.get(enchindex) + " for " + player.getName() + " (" + enchindex + ")");
-                    }
-                }else {
-                    if (enchindex >= allPossibleEnchantments.size()) {
-                        plugin.getLogger().info("All Ench done!");
-                        break;
-                    }else {
-                        ItemStack ench = new ItemStack(Material.ENCHANTED_BOOK);
-                        ench.addUnsafeEnchantment(allPossibleEnchantments.get(enchindex),1);
-                        enchindex++;
-                        inv.setItem(i+1,ench);
-                        plugin.getLogger().info("Set Ench: " + allPossibleEnchantments.get(enchindex-1) + " for " + player.getName() + " (" + enchindex + ")");
-                    }
-                }
-            }
-        } else {
-
-        }
-
-        //DisableShifting
-        inv.setMaxStackSize(1);
     }
 }
