@@ -18,7 +18,7 @@ public class EnchantGUICommand implements CommandExecutor {
 
     if (commandSender instanceof Player) {
         Player player = (Player) commandSender;
-        if (player.hasPermission("Utils.EnchantGUI")) {
+        if (player.hasPermission("GameUtils.EnchantGUI")) {
             int levelint = 0;
             String guiName = ChatColor.DARK_BLUE + "EnchantGUI";
             Inventory gui = Bukkit.createInventory(player, 27, guiName);
@@ -50,9 +50,6 @@ public class EnchantGUICommand implements CommandExecutor {
 
             //SetItems
             gui.setItem(13, new ItemStack(Material.AIR));
-            //gui.setItem(12, search);
-            //gui.setItem(14, level);
-            //gui.setItem(16, allench);
 
             //GuiConf
             gui.setMaxStackSize(1);

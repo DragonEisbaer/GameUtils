@@ -15,7 +15,7 @@ import java.util.List;
 
 public final class GameUtils extends JavaPlugin {
 
-    private final HashMap<Player,ItemStack> itemstacks = new HashMap<>();
+    private final HashMap<Player,ItemStack> storedEnchantItems = new HashMap<>();
     private final List<Player> dispic = new ArrayList<>();
 
     @Override
@@ -44,8 +44,8 @@ public final class GameUtils extends JavaPlugin {
         getLogger().info("Config: GameUtils geladen!");
     }
 
-    public HashMap<Player,ItemStack> getItemstacks() {
-        return itemstacks;
+    public HashMap<Player,ItemStack> getStoredEnchantItem() {
+        return storedEnchantItems;
     }
     
     public List<Player> getDispic() {
