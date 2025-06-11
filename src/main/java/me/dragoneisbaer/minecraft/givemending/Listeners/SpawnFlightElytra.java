@@ -58,6 +58,10 @@ public class SpawnFlightElytra implements Listener {
         meta.setLore(lore);
         Elytra.setItemMeta(meta);
 
+        if (!player.getWorld().equals(Bukkit.getWorlds().get(0))) {
+            return;
+        }
+
         if (playerloc.distance(anfanglocation) <= plugin.getConfig().getInt("FlightRadius")) {
             if (player.isGliding()) {
                 return;
