@@ -66,12 +66,14 @@ public class EnchantGUI implements Listener {
     @EventHandler
     public void onInvClose(InventoryCloseEvent event) {
         String title = event.getView().getTitle();
-        if (title.equalsIgnoreCase(ChatColor.DARK_BLUE + "EnchantGUI")) {
+        if (title.equalsIgnoreCase(ChatColor.DARK_BLUE + "EnchantGUI") || title.equalsIgnoreCase(ChatColor.DARK_BLUE + "Enchant Level Selector")) {
             if (event.getPlayer() instanceof Player && !openingNewInventory) {
                 Player player = (Player) event.getPlayer();
                 if (plugin.getStoredEnchantItem().containsKey(player)) {
                     player.getInventory().addItem(plugin.getStoredEnchantItem().get(player));
+                    plugin.getLogger().info("Removed Item: " + plugin.getStoredEnchantItem().get(player).getType() + " for " + player.getName());
                     plugin.getStoredEnchantItem().remove(player);
+
                 } else {
                     ItemStack item = event.getInventory().getItem(13);
                     if (item != null) {
@@ -133,9 +135,64 @@ public class EnchantGUI implements Listener {
         }
     }
 
+    @EventHandler
+    public void selectBook(InventoryClickEvent e) {
+        if (!e.getView().getTitle().equalsIgnoreCase(ChatColor.DARK_BLUE + "EnchantGUI")) {
+            return;
+        }
+        if (e.getCurrentItem() == null || e.getCurrentItem().getType() != Material.ENCHANTED_BOOK) {
+            return;
+        }
+        if (e.getSlot() < 1 || e.getSlot() > 26) {
+            return;
+        }
+
+        Player player = (Player) e.getWhoClicked();
+        ItemStack selectedBook = e.getCurrentItem();
+
+        if (plugin.getStoredEnchantItem().containsKey(player)) {
+            openingNewInventory = true;
+            openEnchLevelSelector(player, selectedBook);
+        } else {
+            player.sendMessage(ChatColor.RED + "Du hast kein Item ausgewählt, welches du verzaubern möchtest!");
+        }
+
+        e.setCancelled(true);
+    }
+
+    @EventHandler
+    public void addEnchantToItem(InventoryClickEvent e) {
+        if (!e.getView().getTitle().equalsIgnoreCase(ChatColor.DARK_BLUE + "Enchant Level Selector")) {
+            return;
+        }
+        if (e.getCurrentItem() == null || e.getCurrentItem().getType() != Material.ENCHANTED_BOOK) {
+            return;
+        }
+        if (e.getSlot() < 0 || e.getSlot() > 26) {
+            return;
+        }
+
+        Player player = (Player) e.getWhoClicked();
+        ItemStack selectedBook = e.getCurrentItem();
+
+        if (plugin.getStoredEnchantItem().containsKey(player)) {
+            ItemStack itemToEnchant = plugin.getStoredEnchantItem().get(player);
+            itemToEnchant.addUnsafeEnchantment(selectedBook.getItemMeta().getEnchants().keySet().iterator().next(), selectedBook.getEnchantmentLevel(selectedBook.getItemMeta().getEnchants().keySet().iterator().next()));
+            plugin.getStoredEnchantItem().put(player, itemToEnchant);
+            player.sendMessage(ChatColor.GREEN + "Verzauberung hinzugefügt: " + selectedBook.getItemMeta().getEnchants().keySet().iterator().next());
+            openingNewInventory = true;
+            setInv(player, 0);
+            player.openInventory(inv);
+        } else {
+            player.sendMessage(ChatColor.RED + "Du hast kein Item ausgewählt, welches du verzaubern möchtest!");
+        }
+
+        e.setCancelled(true);
+    }
+
     private void setInv(Player player, int startIndex) {
 
-        inv = getBasicInv(player);
+        inv = getBasicInv(player, "EnchantGUI");
 
         int enchindex = startIndex;
 
@@ -147,16 +204,8 @@ public class EnchantGUI implements Listener {
             safeslots.add(27);
         }
         for (int i = 0; i < inv.getSize(); i++) {
-            plugin.getLogger().info("Slot: " + i + " for " + player.getName());
-            if (safeslots.contains(i + 1)) {
+            if (!safeslots.contains(i + 1)) {
                 if (enchindex >= allPossibleEnchantments.size()) {
-                    plugin.getLogger().info("All Ench done!");
-                } else {
-                    plugin.getLogger().info("Skip Ench: " + allPossibleEnchantments.get(enchindex) + " for " + player.getName() + " (" + enchindex + ")");
-                }
-            } else {
-                if (enchindex >= allPossibleEnchantments.size()) {
-                    plugin.getLogger().info("All Ench done!");
                     page.put(player, 99);
                     break;
                 } else {
@@ -164,7 +213,6 @@ public class EnchantGUI implements Listener {
                     ench.addUnsafeEnchantment(allPossibleEnchantments.get(enchindex), 1);
                     enchindex++;
                     inv.setItem(i + 1, ench);
-                    plugin.getLogger().info("Set Ench: " + allPossibleEnchantments.get(enchindex - 1) + " for " + player.getName() + " (" + enchindex + ")");
                 }
             }
         }
@@ -183,8 +231,84 @@ public class EnchantGUI implements Listener {
         inv.setMaxStackSize(1);
     }
 
-    private Inventory getBasicInv(Player player) {
-        Inventory basicInv = Bukkit.createInventory(null, 27, ChatColor.DARK_BLUE + "EnchantGUI");
+    private void openEnchLevelSelector(Player player, ItemStack selectedBook) {
+
+        Inventory enchLevelInv = getBasicInv(player, "Enchant Level Selector");
+
+
+        if (selectedBook.getItemMeta().getEnchants().size() == 1) {
+            Enchantment enchantment = selectedBook.getItemMeta().getEnchants().keySet().iterator().next();
+
+            ItemStack level1 = new ItemStack(Material.ENCHANTED_BOOK);
+            ItemStack level2 = new ItemStack(Material.ENCHANTED_BOOK);
+            ItemStack level3 = new ItemStack(Material.ENCHANTED_BOOK);
+            ItemStack level4 = new ItemStack(Material.ENCHANTED_BOOK);
+            ItemStack level5 = new ItemStack(Material.ENCHANTED_BOOK);
+
+            switch (enchantment.getMaxLevel()) {
+                case 1:
+                    level1.addUnsafeEnchantment(enchantment, 1);
+                    enchLevelInv.setItem(15, level1);
+                    level1.removeEnchantment(enchantment);
+                    break;
+                case 2:
+                    level1.addUnsafeEnchantment(enchantment, 1);
+                    level2.addUnsafeEnchantment(enchantment, 2);
+                    enchLevelInv.setItem(14, level1);
+                    enchLevelInv.setItem(16, level2);
+                    level1.removeEnchantment(enchantment);
+                    level2.removeEnchantment(enchantment);
+                    break;
+                case 3:
+                    level1.addUnsafeEnchantment(enchantment, 1);
+                    level2.addUnsafeEnchantment(enchantment, 2);
+                    level3.addUnsafeEnchantment(enchantment, 3);
+                    enchLevelInv.setItem(14, level1);
+                    enchLevelInv.setItem(15, level2);
+                    enchLevelInv.setItem(16, level3);
+                    level1.removeEnchantment(enchantment);
+                    level2.removeEnchantment(enchantment);
+                    level3.removeEnchantment(enchantment);
+                    break;
+                case 4:
+                    level1.addUnsafeEnchantment(enchantment, 1);
+                    level2.addUnsafeEnchantment(enchantment, 2);
+                    level3.addUnsafeEnchantment(enchantment, 3);
+                    level4.addUnsafeEnchantment(enchantment, 4);
+                    enchLevelInv.setItem(13, level1);
+                    enchLevelInv.setItem(14, level2);
+                    enchLevelInv.setItem(16, level3);
+                    enchLevelInv.setItem(17, level4);
+                    level1.removeEnchantment(enchantment);
+                    level2.removeEnchantment(enchantment);
+                    level3.removeEnchantment(enchantment);
+                    level4.removeEnchantment(enchantment);
+                    break;
+                case 5:
+                    level1.addUnsafeEnchantment(enchantment, 1);
+                    level2.addUnsafeEnchantment(enchantment, 2);
+                    level3.addUnsafeEnchantment(enchantment, 3);
+                    level4.addUnsafeEnchantment(enchantment, 4);
+                    level5.addUnsafeEnchantment(enchantment, 5);
+                    enchLevelInv.setItem(13, level1);
+                    enchLevelInv.setItem(14, level2);
+                    enchLevelInv.setItem(15, level3);
+                    enchLevelInv.setItem(16, level4);
+                    enchLevelInv.setItem(17, level5);
+                    level1.removeEnchantment(enchantment);
+                    level2.removeEnchantment(enchantment);
+                    level3.removeEnchantment(enchantment);
+                    level4.removeEnchantment(enchantment);
+                    level5.removeEnchantment(enchantment);
+                    break;
+            }
+        }
+        player.openInventory(enchLevelInv);
+        openingNewInventory = true;
+    }
+
+    private Inventory getBasicInv(Player player, String title) {
+        Inventory basicInv = Bukkit.createInventory(null, 27, ChatColor.DARK_BLUE + title);
 
         //SetPanes
         for (int i = 0; basicInv.getSize() > i; i++) {
