@@ -32,6 +32,7 @@ public final class GameUtils extends JavaPlugin {
         getCommand("ec").setExecutor(new Enderchest());
         getCommand("restart").setExecutor(new RestartServer());
         getCommand("spawn").setExecutor(new Spawn());
+        getCommand("timeweather").setExecutor(new TimeWeatherSetClear());
 
         //Listeners
         getServer().getPluginManager().registerEvents(new EnchantGUI(), this);

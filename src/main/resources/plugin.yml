@@ -22,3 +22,5 @@ commands:
     description: Restarts server with cooldown.
   spawn:
     description: Teleports to spawn.
+  timeweather:
+    description: Sets time and weather to clear and daytime.
