@@ -146,13 +146,16 @@ public class EnchantGUI implements Listener {
 
         Player player = (Player) e.getWhoClicked();
         ItemStack selectedBook = e.getCurrentItem();
+        ItemMeta meta = selectedBook.getItemMeta();
 
         if (plugin.getStoredEnchantItem().containsKey(player)) {
             openingNewInventory = true;
-            openEnchLevelSelector(player, selectedBook);
+            assert meta != null;
+            openEnchLevelSelector(player, meta.getEnchants().keySet().iterator().next());
         } else {
             player.sendMessage(ChatColor.RED + "Du hast kein Item ausgewählt, welches du verzaubern möchtest!");
         }
+        openingNewInventory = false;
 
         e.setCancelled(true);
     }
@@ -272,43 +275,38 @@ public class EnchantGUI implements Listener {
         inv.setMaxStackSize(1);
     }
 
-    private void openEnchLevelSelector(Player player, ItemStack selectedBook) {
+    private void openEnchLevelSelector(Player player, Enchantment enchantment) {
         Inventory enchLevelInv = getBasicInv(player, "Enchant Level Selector");
 
-        if (selectedBook.getItemMeta().getEnchants().size() == 1) {
-            Enchantment enchantment = selectedBook.getItemMeta().getEnchants().keySet().iterator().next();
-            int maxLevel = enchantment.getMaxLevel();
+        int maxLevel = enchantment.getMaxLevel();
 
-            // Slot-Positionen je nach MaxLevel
-            int[] slots;
-            switch (maxLevel) {
-                case 1:
-                    slots = new int[]{15};
-                    break;
-                case 2:
-                    slots = new int[]{14, 16};
-                    break;
-                case 3:
-                    slots = new int[]{14, 15, 16};
-                    break;
-                case 4:
-                    slots = new int[]{13, 14, 16, 17};
-                    break;
-                case 5:
-                    slots = new int[]{13, 14, 15, 16, 17};
-                    break;
-                default:
-                    slots = new int[]{13, 14, 15, 16, 17};
-                    break;
-            }
+        // Slot-Positions for different max levels
+        int[] slots;
+        switch (maxLevel) {
+            case 1:
+                slots = new int[]{15};
+                break;
+            case 2:
+                slots = new int[]{14, 16};
+                break;
+            case 3:
+                slots = new int[]{14, 15, 16};
+                break;
+            case 4:
+                slots = new int[]{13, 14, 16, 17};
+                break;
+            default:
+                slots = new int[]{13, 14, 15, 16, 17};
+                break;
+        }
 
-            for (int level = 1; level <= maxLevel; level++) {
-                ItemStack levelBook = new ItemStack(Material.ENCHANTED_BOOK);
-                EnchantmentStorageMeta meta = (EnchantmentStorageMeta) levelBook.getItemMeta();
-                meta.addStoredEnchant(enchantment, level, true);
-                levelBook.setItemMeta(meta);
-                enchLevelInv.setItem(slots[level - 1], levelBook);
-            }
+        for (int level = 1; level <= maxLevel; level++) {
+            ItemStack levelBook = new ItemStack(Material.ENCHANTED_BOOK);
+            EnchantmentStorageMeta meta = (EnchantmentStorageMeta) levelBook.getItemMeta();
+            assert meta != null;
+            meta.addStoredEnchant(enchantment, level, true);
+            levelBook.setItemMeta(meta);
+            enchLevelInv.setItem(slots[level - 1], levelBook);
         }
         player.openInventory(enchLevelInv);
         openingNewInventory = true;

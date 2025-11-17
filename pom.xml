@@ -32,7 +32,7 @@
             <artifactId>maven-jar-plugin</artifactId>
             <version>2.3.1</version>
             <configuration>
-                <outputDirectory>D:\Brian\16_Programieren\Kody Simpson\server\server 1.21.1\plugins</outputDirectory>
+                <outputDirectory>C:\Coding\Java\Minecraft\server\server 1.21.8\plugins</outputDirectory>
             </configuration>
         </plugin>
       <plugin>
